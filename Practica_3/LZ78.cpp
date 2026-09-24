@@ -4,17 +4,6 @@ using namespace std;
 
 #include "LZ78.h"
 
-struct EntradaDiccionario {
-    int Prefijo; //Indice de la entrada
-    char Caracter; //caracter agregado al final de prefijo
-
-};
-
-struct Parejas{
-    int Indice;
-    char Caracter;
-
-};
 
 int Buscarentrada(EntradaDiccionario *Diccionario, int Cantidad, int Prefijo, char Caracter){
     for (int G = 0; G < Cantidad; ++G) {
