@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 using namespace std;
+#include "ENCRIPTACION.h"
 
 unsigned char Rotar_Izquierda(unsigned char Byte, int A){
     return (unsigned char)((Byte << A) | (Byte >>(8 - A)));

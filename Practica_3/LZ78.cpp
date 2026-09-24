@@ -2,6 +2,8 @@
 #include <string>
 using namespace std;
 
+#include "LZ78.h"
+
 struct EntradaDiccionario {
     int Prefijo; //Indice de la entrada
     char Caracter; //caracter agregado al final de prefijo
