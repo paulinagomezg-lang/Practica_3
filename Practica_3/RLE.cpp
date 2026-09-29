@@ -17,8 +17,8 @@ string ComprimirRLE(const string &texto) {
             Contador++;
         }
 
-        Comprimido = Comprimido + Actual;
         Comprimido = Comprimido + to_string(Contador);
+        Comprimido = Comprimido + Actual;
 
         G = G + Contador;
     }
@@ -34,9 +34,6 @@ string DescomprimirRLE(const string &Comprimido) {
 
     int G = 0;
     while (G < A) {
-        char Caracter = Comprimido[G];
-        G++;
-
         // leer el numero (puede tener varios digitos)
         string numeroStr = "";
         while (G < A && isdigit(Comprimido[G])) {
@@ -44,7 +41,12 @@ string DescomprimirRLE(const string &Comprimido) {
             G++;
         }
 
-        int Cantidad = stoi(numeroStr);
+        int Cantidad = stoi(numeroStr);  //string que contiene un número en un int
+        G++;
+
+        char Caracter = Comprimido[G];
+        G++;
+
         for (int P = 0; P < Cantidad; ++P) {
             Original += Caracter;
         }

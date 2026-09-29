@@ -24,7 +24,7 @@ void AgregarlaEntrada(EntradaDiccionario *&Diccionario, int &Capacidad, int &Can
             NuevaCapacidad = Capacidad * 2;
         }
         EntradaDiccionario *Nuevo = new EntradaDiccionario[NuevaCapacidad];
-        for (int G = 0; G < Cantidad; ++G) Nuevo[G] = Diccionario[G] ;
+        for (int G = 0; G < Cantidad; ++G) Nuevo[G] = Diccionario[G] ; //copia de diccionario para agrandar capacidad
         delete[] Diccionario;
         Diccionario = Nuevo;
         Capacidad = NuevaCapacidad;

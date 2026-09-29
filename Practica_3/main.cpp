@@ -7,9 +7,9 @@ using namespace std;
 #include "LZ78.h"
 #include "ENCRIPTACION.h"
 
-// ---------- Prueba del modulo RLE ----------
+
 void probarRLE() {
-    cout << "===== PRUEBA RLE =====" << endl;
+    cout << "PRUEBA RLE " << endl;
 
     string texto;
     cout << "Ingrese un texto para probar RLE: ";
@@ -34,9 +34,9 @@ void probarRLE() {
     cout << endl;
 }
 
-// ---------- Prueba del modulo LZ78 ----------
+
 void probarLZ78() {
-    cout << "===== PRUEBA LZ78 =====" << endl;
+    cout << " PRUEBA LZ78 " << endl;
 
     string texto;
     cout << "Ingrese un texto para probar LZ78: ";
@@ -72,9 +72,9 @@ void probarLZ78() {
     cout << endl;
 }
 
-// ---------- Prueba del modulo de Encriptacion ----------
+
 void probarEncriptacion() {
-    cout << "===== PRUEBA ENCRIPTACION =====" << endl;
+    cout << " PRUEBA ENCRIPTACION " << endl;
 
     string texto;
     cout << "Ingrese un texto para probar encriptacion: ";
@@ -91,7 +91,7 @@ void probarEncriptacion() {
     cin.ignore();
 
     // Tipo 3: out_of_range (un valor se sale del rango permitido)
-    if (n <= 0 || n >= 8 || claveEntera < 0 || claveEntera > 255) {
+    if (n <= 0 || n >= 8 || claveEntera < 0 || claveEntera > 255) { //Clave es la rotaion
         throw out_of_range("Error en Encriptacion: parametros fuera de rango.");
     }
     unsigned char K = (unsigned char)claveEntera;
