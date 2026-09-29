@@ -27,9 +27,9 @@ void probarRLE() {
     cout << "Descomprimido: " << descomprimido << endl;
 
     if (descomprimido == texto) {
-        cout << "RLE: OK, coincide con el original." << endl;
+        cout << "OK, coincide con el original." << endl;
     } else {
-        cout << "RLE: ERROR, no coincide." << endl;
+        cout << "ERROR, no coincide." << endl;
     }
     cout << endl;
 }
@@ -42,7 +42,7 @@ void probarLZ78() {
     cout << "Ingrese un texto para probar LZ78: ";
     getline(cin, texto);
 
-    // Tipo 2: length_error (problema relacionado con el tamanio/longitud del dato)
+    // Tipo 2: length_error (problema relacionado con el tamaño/longitud del dato)
     if (texto.empty()) {
         throw length_error("Error en LZ78: el texto no puede tener longitud cero.");
     }
@@ -63,9 +63,9 @@ void probarLZ78() {
     cout << "Descomprimido: " << descomprimido << endl;
 
     if (descomprimido == texto) {
-        cout << "LZ78: OK, coincide con el original." << endl;
+        cout << "OK, coincide con el original." << endl;
     } else {
-        cout << "LZ78: ERROR, no coincide." << endl;
+        cout << "ERROR, no coincide." << endl;
     }
 
     delete[] pares;
@@ -81,7 +81,7 @@ void probarEncriptacion() {
     getline(cin, texto);
 
     int n;
-    cout << "Ingrese el valor de rotacion n (0 < n < 8): ";
+    cout << "Ingrese el valor de rotacion n (0 < A < 8): ";
     cin >> n;
     cin.ignore();
 
