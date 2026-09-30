@@ -28,7 +28,7 @@ string DescomprimirRLE(const string &Comprimido) {
             G++;
         }
         int Cantidad = stoi(numeroStr);
-        G++; // salta el '-'   <-- este G++ SOLO es correcto si arriba SI hay separador
+        G++; //salta el separador, sabiendo con certeza que esta ahi
         char Caracter = Comprimido[G];
         G++;
         for (int P = 0; P < Cantidad; ++P) Original += Caracter;

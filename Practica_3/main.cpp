@@ -1,19 +1,65 @@
 #include <iostream>
 #include <string>
 #include <stdexcept>
+#include <fstream>
 using namespace std;
 
 #include "RLE.h"
 #include "LZ78.h"
 #include "ENCRIPTACION.h"
 
+// Lee todo el contenido de un archivo de texto y lo devuelve como string
+string leerArchivoTxt(const string &ruta) {
+    ifstream archivo(ruta);
+    if (!archivo.is_open()) {
+        throw runtime_error("No se pudo abrir el archivo: " + ruta);
+    }
+
+    string contenido = "";
+    string linea;
+    bool primeraLinea = true;
+    while (getline(archivo, linea)) {
+        if (!primeraLinea) contenido += '\n';
+        contenido += linea;
+        primeraLinea = false;
+    }
+
+    archivo.close();
+    return contenido;
+}
+
+// Pregunta al usuario si quiere ingresar el texto por teclado o desde un archivo,
+// y devuelve el texto ya obtenido por el metodo elegido.
+string obtenerTexto() {
+    int opcion;
+    cout << "Como desea ingresar el texto?" << endl;
+    cout << "1. Escribirlo por teclado" << endl;
+    cout << "2. Leerlo desde un archivo .txt" << endl;
+    cout << "Opcion: ";
+    cin >> opcion;
+    cin.ignore(); // limpia el salto de linea pendiente en el buffer
+
+    if (opcion == 1) {
+        string texto;
+        cout << "Ingrese el texto: ";
+        getline(cin, texto);
+        return texto;
+    } else if (opcion == 2) {
+        string rutaArchivo;
+        cout << "Ingrese la ruta del archivo .txt: ";
+        getline(cin, rutaArchivo);
+        string texto = leerArchivoTxt(rutaArchivo);
+        cout << "Texto leido: " << texto << endl;
+        return texto;
+    } else {
+        throw invalid_argument("Opcion de entrada invalida.");
+    }
+}
 
 void probarRLE() {
     cout << "PRUEBA RLE " << endl;
 
-    string texto;
-    cout << "Ingrese un texto para probar RLE: ";
-    getline(cin, texto);
+    string texto = obtenerTexto();
 
     // Tipo 1: invalid_argument (el dato de entrada no es valido)
     if (texto.empty()) {
@@ -34,13 +80,10 @@ void probarRLE() {
     cout << endl;
 }
 
-
 void probarLZ78() {
     cout << " PRUEBA LZ78 " << endl;
 
-    string texto;
-    cout << "Ingrese un texto para probar LZ78: ";
-    getline(cin, texto);
+    string texto = obtenerTexto();
 
     // Tipo 2: length_error (problema relacionado con el tamaño/longitud del dato)
     if (texto.empty()) {
@@ -72,16 +115,13 @@ void probarLZ78() {
     cout << endl;
 }
 
-
 void probarEncriptacion() {
     cout << " PRUEBA ENCRIPTACION " << endl;
 
-    string texto;
-    cout << "Ingrese un texto para probar encriptacion: ";
-    getline(cin, texto);
+    string texto = obtenerTexto();
 
     int n;
-    cout << "Ingrese el valor de rotacion n (0 < A < 8): ";
+    cout << "Ingrese el valor de rotacion n (0 < n < 8): ";
     cin >> n;
     cin.ignore();
 
@@ -91,7 +131,7 @@ void probarEncriptacion() {
     cin.ignore();
 
     // Tipo 3: out_of_range (un valor se sale del rango permitido)
-    if (n <= 0 || n >= 8 || claveEntera < 0 || claveEntera > 255) { //Clave es la rotaion
+    if (n <= 0 || n >= 8 || claveEntera < 0 || claveEntera > 255) {
         throw out_of_range("Error en Encriptacion: parametros fuera de rango.");
     }
     unsigned char K = (unsigned char)claveEntera;
@@ -132,18 +172,28 @@ int main() {
         probarRLE();
     } catch (const invalid_argument &error) {
         cout << "Excepcion capturada (invalid_argument): " << error.what() << endl << endl;
+    } catch (const runtime_error &error) {
+        cout << "Excepcion capturada (runtime_error): " << error.what() << endl << endl;
     }
 
     try {
         probarLZ78();
     } catch (const length_error &error) {
         cout << "Excepcion capturada (length_error): " << error.what() << endl << endl;
+    } catch (const invalid_argument &error) {
+        cout << "Excepcion capturada (invalid_argument): " << error.what() << endl << endl;
+    } catch (const runtime_error &error) {
+        cout << "Excepcion capturada (runtime_error): " << error.what() << endl << endl;
     }
 
     try {
         probarEncriptacion();
     } catch (const out_of_range &error) {
         cout << "Excepcion capturada (out_of_range): " << error.what() << endl << endl;
+    } catch (const invalid_argument &error) {
+        cout << "Excepcion capturada (invalid_argument): " << error.what() << endl << endl;
+    } catch (const runtime_error &error) {
+        cout << "Excepcion capturada (runtime_error): " << error.what() << endl << endl;
     }
 
     return 0;
