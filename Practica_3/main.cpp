@@ -8,11 +8,12 @@ using namespace std;
 #include "LZ78.h"
 #include "ENCRIPTACION.h"
 
+
 // Lee todo el contenido de un archivo de texto y lo devuelve como string
 string leerArchivoTxt(const string &ruta) {
     ifstream archivo(ruta);
     if (!archivo.is_open()) {
-        throw runtime_error("No se pudo abrir el archivo: " + ruta);
+        throw runtime_error("No se pudo abrir el archivo.");
     }
 
     string contenido = "";
@@ -28,8 +29,7 @@ string leerArchivoTxt(const string &ruta) {
     return contenido;
 }
 
-// Pregunta al usuario si quiere ingresar el texto por teclado o desde un archivo,
-// y devuelve el texto ya obtenido por el metodo elegido.
+// Pregunta al usuario si quiere ingresar el texto por teclado o desde un archivo (version RLE, con string)
 string obtenerTexto() {
     int opcion;
     cout << "Como desea ingresar el texto?" << endl;
@@ -37,7 +37,7 @@ string obtenerTexto() {
     cout << "2. Leerlo desde un archivo .txt" << endl;
     cout << "Opcion: ";
     cin >> opcion;
-    cin.ignore(); // limpia el salto de linea pendiente en el buffer
+    cin.ignore();
 
     if (opcion == 1) {
         string texto;
@@ -56,12 +56,108 @@ string obtenerTexto() {
     }
 }
 
+
+// Lee una linea desde teclado caracter por caracter, sin usar string, en un arreglo dinamico
+char* leerLineaTeclado(int &Longitud) {
+    int capacidad = 0, cantidad = 0;
+    char *buffer = nullptr;
+    char c;
+
+    while (cin.get(c)) {
+        if (c == '\n') break;
+        if (cantidad == capacidad) {
+            int nuevaCapacidad = (capacidad == 0) ? 32 : capacidad * 2;
+            char *nuevo = new char[nuevaCapacidad];
+            for (int i = 0; i < cantidad; ++i) nuevo[i] = buffer[i];
+            delete[] buffer;
+            buffer = nuevo;
+            capacidad = nuevaCapacidad;
+        }
+        buffer[cantidad] = c;
+        cantidad++;
+    }
+
+    char *conNulo = new char[cantidad + 1];
+    for (int i = 0; i < cantidad; ++i) conNulo[i] = buffer[i];
+    conNulo[cantidad] = '\0';
+    delete[] buffer;
+
+    Longitud = cantidad;
+    return conNulo;
+}
+
+// Lee un archivo completo en un arreglo dinamico de char, sin usar string
+char* leerArchivoCharArray(const char *ruta, int &Longitud) {
+    ifstream archivo(ruta, ios::binary);
+    if (!archivo.is_open()) {
+        throw runtime_error("No se pudo abrir el archivo.");
+    }
+
+    int capacidad = 0, cantidad = 0;
+    char *buffer = nullptr;
+    char c;
+    while (archivo.get(c)) {
+        if (cantidad == capacidad) {
+            int nuevaCapacidad = (capacidad == 0) ? 64 : capacidad * 2;
+            char *nuevo = new char[nuevaCapacidad];
+            for (int i = 0; i < cantidad; ++i) nuevo[i] = buffer[i];
+            delete[] buffer;
+            buffer = nuevo;
+            capacidad = nuevaCapacidad;
+        }
+        buffer[cantidad] = c;
+        cantidad++;
+    }
+
+    char *conNulo = new char[cantidad + 1];
+    for (int i = 0; i < cantidad; ++i) conNulo[i] = buffer[i];
+    conNulo[cantidad] = '\0';
+    delete[] buffer;
+
+    Longitud = cantidad;
+    return conNulo;
+}
+
+// Menu de entrada (teclado o archivo), version sin string, para LZ78 y Encriptacion
+char* obtenerTextoChar(int &Longitud) {
+    int opcion;
+    cout << "Como desea ingresar el texto?" << endl;
+    cout << "1. Escribirlo por teclado" << endl;
+    cout << "2. Leerlo desde un archivo .txt" << endl;
+    cout << "Opcion: ";
+    cin >> opcion;
+    cin.ignore();
+
+    if (opcion == 1) {
+        cout << "Ingrese el texto: ";
+        return leerLineaTeclado(Longitud);
+    } else if (opcion == 2) {
+        char rutaArchivo[300];
+        cout << "Ingrese la ruta del archivo .txt: ";
+        cin.getline(rutaArchivo, 300);
+        char *texto = leerArchivoCharArray(rutaArchivo, Longitud);
+        cout << "Texto leido: " << texto << endl;
+        return texto;
+    } else {
+        throw invalid_argument("Opcion de entrada invalida.");
+    }
+}
+
+// Compara dos arreglos de char por contenido y longitud (reemplaza el "==" de string)
+bool compararArreglos(const char *a, int longA, const char *b, int longB) {
+    if (longA != longB) return false;
+    for (int i = 0; i < longA; ++i) {
+        if (a[i] != b[i]) return false;
+    }
+    return true;
+}
+
+
 void probarRLE() {
     cout << "PRUEBA RLE " << endl;
 
     string texto = obtenerTexto();
 
-    // Tipo 1: invalid_argument (el dato de entrada no es valido)
     if (texto.empty()) {
         throw invalid_argument("Error en RLE: el texto no puede estar vacio.");
     }
@@ -83,10 +179,11 @@ void probarRLE() {
 void probarLZ78() {
     cout << " PRUEBA LZ78 " << endl;
 
-    string texto = obtenerTexto();
+    int longitudTexto;
+    char *texto = obtenerTextoChar(longitudTexto);
 
-    // Tipo 2: length_error (problema relacionado con el tamaño/longitud del dato)
-    if (texto.empty()) {
+    if (longitudTexto == 0) {
+        delete[] texto;
         throw length_error("Error en LZ78: el texto no puede tener longitud cero.");
     }
 
@@ -97,28 +194,37 @@ void probarLZ78() {
     cout << "Pares generados: ";
     for (int i = 0; i < cantidadPares; ++i) {
         char c = pares[i].Caracter;
-        cout << "(" << pares[i].Indice << ","
-             << (c == '\0' ? "FIN" : string(1, c)) << ") ";
+        cout << "(" << pares[i].Indice << ",";
+        if (c == '\0') cout << "FIN";
+        else cout << c;
+        cout << ") ";
     }
     cout << endl;
 
-    string descomprimido = Descomprimir_LZ78(pares, cantidadPares);
-    cout << "Descomprimido: " << descomprimido << endl;
+    int longitudResultado;
+    char *descomprimido = Descomprimir_LZ78(pares, cantidadPares, longitudResultado);
 
-    if (descomprimido == texto) {
+    cout << "Descomprimido: ";
+    for (int i = 0; i < longitudResultado; ++i) cout << descomprimido[i];
+    cout << endl;
+
+    if (compararArreglos(descomprimido, longitudResultado, texto, longitudTexto)) {
         cout << "OK, coincide con el original." << endl;
     } else {
         cout << "ERROR, no coincide." << endl;
     }
 
+    delete[] texto;
     delete[] pares;
+    delete[] descomprimido;
     cout << endl;
 }
 
 void probarEncriptacion() {
     cout << " PRUEBA ENCRIPTACION " << endl;
 
-    string texto = obtenerTexto();
+    int cantidad;
+    char *texto = obtenerTextoChar(cantidad);
 
     int n;
     cout << "Ingrese el valor de rotacion n (0 < n < 8): ";
@@ -130,13 +236,12 @@ void probarEncriptacion() {
     cin >> claveEntera;
     cin.ignore();
 
-    // Tipo 3: out_of_range (un valor se sale del rango permitido)
     if (n <= 0 || n >= 8 || claveEntera < 0 || claveEntera > 255) {
+        delete[] texto;
         throw out_of_range("Error en Encriptacion: parametros fuera de rango.");
     }
     unsigned char K = (unsigned char)claveEntera;
 
-    int cantidad = texto.length();
     unsigned char *datos = new unsigned char[cantidad];
     for (int i = 0; i < cantidad; ++i) {
         datos[i] = (unsigned char)texto[i];
@@ -150,17 +255,22 @@ void probarEncriptacion() {
 
     unsigned char *desencriptado = Desencriptar_Datos(encriptado, cantidad, n, K);
 
-    string recuperado = "";
-    for (int i = 0; i < cantidad; ++i) recuperado += (char)desencriptado[i];
+    cout << "Desencriptado: ";
+    for (int i = 0; i < cantidad; ++i) cout << (char)desencriptado[i];
+    cout << endl;
 
-    cout << "Desencriptado: " << recuperado << endl;
+    bool coincide = true;
+    for (int i = 0; i < cantidad; ++i) {
+        if ((char)desencriptado[i] != texto[i]) { coincide = false; break; }
+    }
 
-    if (recuperado == texto) {
+    if (coincide) {
         cout << "Encriptacion: OK, coincide con el original." << endl;
     } else {
         cout << "Encriptacion: ERROR, no coincide." << endl;
     }
 
+    delete[] texto;
     delete[] datos;
     delete[] encriptado;
     delete[] desencriptado;

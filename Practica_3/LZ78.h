@@ -18,7 +18,8 @@ void AgregarlaEntrada(EntradaDiccionario *&Diccionario, int &Capacidad, int &Can
 void Agregar_Parejas(Parejas *&Salida, int &Capacidad , int &Cantidad, int Indice, char Caracter);
 void ComprimirLZ78(const string &texto, Parejas *&Salida, int &CantidadParejas);
 char* Reconstruit_Frase(EntradaDiccionario *Diccionario, int Indice, int &Longitud);
-string Descomprimir_LZ78(Parejas *Pares , int CantidadPares );
+char* Descomprimir_LZ78(Parejas *Pares, int CantidadPares, int &LongitudResultado);
+void AgregarCaracterResultado(char *&Buffer, int &Capacidad, int &Cantidad, char C);
 
 
 #endif // LZ78_H

@@ -115,11 +115,12 @@ char* Reconstruit_Frase(EntradaDiccionario *Diccionario, int Indice, int &Longit
     return Frase;
 }
 
-string Descomprimir_LZ78(Parejas *Pares , int CantidadPares ){
+char* Descomprimir_LZ78(Parejas *Pares, int CantidadPares, int &LongitudResultado) {
     int CapacidadDiccionario = 0, CantidadDiccionario = 0;
     EntradaDiccionario *Diccionario = nullptr;
 
-    string Resultado = "";
+    int CapacidadResultado = 0, CantidadResultado = 0;
+    char *Resultado = nullptr;
 
     for (int P = 0; P < CantidadPares; ++P) {
         int Indice = Pares[P].Indice;
@@ -127,16 +128,35 @@ string Descomprimir_LZ78(Parejas *Pares , int CantidadPares ){
 
         int LongitudFrase;
         char *Frase = Reconstruit_Frase(Diccionario, Indice, LongitudFrase);
-        for (int S = 0; S < LongitudFrase; ++S) Resultado = Resultado + Frase[S];
+        for (int S = 0; S < LongitudFrase; ++S) {
+            AgregarCaracterResultado(Resultado, CapacidadResultado, CantidadResultado, Frase[S]);
+        }
         delete[] Frase;
 
         bool Es_Centinela = (Caracter == '\0');
-        if (!Es_Centinela){
-            Resultado = Resultado + Caracter;
+        if (!Es_Centinela) {
+            AgregarCaracterResultado(Resultado, CapacidadResultado, CantidadResultado, Caracter);
             AgregarlaEntrada(Diccionario, CapacidadDiccionario, CantidadDiccionario, Indice, Caracter);
         }
     }
 
-    delete[]Diccionario;
+    delete[] Diccionario;
+    LongitudResultado = CantidadResultado;
     return Resultado;
+}
+// crece un char* dinamico en 1 posicion (mismo esquema que Agregar_Parejas)
+void AgregarCaracterResultado(char *&Buffer, int &Capacidad, int &Cantidad, char C) {
+    if (Cantidad == Capacidad) {
+        int NuevaCapacidad;
+        if (Capacidad == 0) NuevaCapacidad = 16;
+        else NuevaCapacidad = Capacidad * 2;
+
+        char *Nuevo = new char[NuevaCapacidad];
+        for (int i = 0; i < Cantidad; ++i) Nuevo[i] = Buffer[i];
+        delete[] Buffer;
+        Buffer = Nuevo;
+        Capacidad = NuevaCapacidad;
+    }
+    Buffer[Cantidad] = C;
+    Cantidad++;
 }

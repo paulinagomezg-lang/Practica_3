@@ -1,0 +1,11 @@
+el algoritmo de compresion lz78 construye un diccionario dinimico mientras procesa el texto.
+el algoritmo rle comprime secuencias consecutivas de caracteres iguales.
+cuando se procesa el texto con el algoritmo lz78, las subcadenas repetidas permiten que el diccionario del algoritmo lz78 crezca y comprima eficazmente.
+el algoritmo de compresion rle es muy simple pero el algoritmo de compresion lz78 es mas avanzado.
+el algoritmo lz78 y el algoritmo rle son dos metodos clasicos de compresion de datos.
+el algoritmo lz78 analiza la entrada carácter a carácter para identificar patrones repetidos.
+si el patron ya existe en el diccionario del algoritmo lz78, el algoritmo agrega el nuevo carácter al patron existente.
+el texto que tiene repeticiones consecutivas beneficia al algoritmo rle, mientras que el texto con estructuras repetidas beneficia al algoritmo lz78.
+el diccionario del algoritmo lz78 se actualiza constantemente mientras el algoritmo de compresion lee la entrada.
+este ejemplo esta diseñado para mostrar cómo el algoritmo lz78 reutiliza secuencias previas para lograr una mayor tasa de compresion en comparacion con el algoritmo rle cuando no hay repeticiones consecutivas de caracteres simples.
+el algoritmo lz78, el algoritmo lz78, el algoritmo rle, el algoritmo rle, la compresion de datos con el algoritmo lz78 es eficiente.
